@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION generate_shipment_id(target_date DATE)
+RETURNS VARCHAR AS $$
+DECLARE
+    shipment_id VARCHAR;
+BEGIN
+    SELECT TO_CHAR(target_date, 'YYMMDD') || LPAD(COALESCE(MAX(SUBSTRING(shipment_id, 7)::INT, 0) + 1, 1)::TEXT, 3, '0')
+    INTO shipment_id
+    FROM app.deliveries;
+    
+    RETURN shipment_id;
+END;
+$$ LANGUAGE plpgsql;
